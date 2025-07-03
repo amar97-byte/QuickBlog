@@ -26,7 +26,7 @@ export const addBlog = async(req,res)=> {
         })
 
         // Optimization through imageKit URL transformation
-           const optimizedImageURL = ImageKit.url({
+           const optimizedImageURL = imagekit.url({
             path : response.filePath,
             transformation : [
                 {quality : 'auto'},     // Auto compression
@@ -45,7 +45,7 @@ export const addBlog = async(req,res)=> {
             isPublished
            })
 
-           res.json({success : true , message : "Blod data added"})
+           res.json({success : true , message : "Blog data added"})
         
 
     } catch (error) {
