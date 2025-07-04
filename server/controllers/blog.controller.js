@@ -1,7 +1,7 @@
 import fs from "fs"
 import imagekit from "../config/imagekit.js"
-import ImageKit from "imagekit"
 import Blog from "../models/blog.model.js"
+import Comment from "../models/comment.model.js"
 
 
 // ADD BLOG FUNCTION
@@ -57,7 +57,6 @@ export const addBlog = async(req,res)=> {
 
 
 // GET ALL BLOGS
-
  export const  getBlogList = async(req , res)=>{
     try {
         const blogs = await Blog.find({isPublished : true})
@@ -91,7 +90,6 @@ export const getBlogById = async (req , res)=> {
 
 
 // DELETE ANY BLOG
-
 export const deleteBlog = async (req , res)=> {
     try {
         const {id} = req.body
@@ -125,11 +123,16 @@ export const togglePublish = async (req , res)=>{
 
 
 // ADD COMMENT
-
 export const addComment = async (req , res)=>{
     try {
         const {blog , name , content} = req.body
-     
+    await Comment.create({
+        blog,
+        name,
+        content
+    }) 
+
+    res.json({success : true , message : "Comment Add for review"})
         
     } catch (error) {
         console.log(error.message);
@@ -137,3 +140,17 @@ export const addComment = async (req , res)=>{
     }
 }
 
+
+// GET THE COMMENTS OF A BLOG
+export const getBlogComments = async (req , res)=>{
+    try {
+        const {blogId } = req.body
+        const comments = await Comment.find({blog : blogId , isApproved : true}).sort({createdAt : -1})
+    res.json({success : true , comments})
+
+        
+    } catch (error) {
+        console.log(error.message);
+        return res.json({success : false , message : error.message})
+    }
+}
