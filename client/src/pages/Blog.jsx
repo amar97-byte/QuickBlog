@@ -5,28 +5,75 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Moment from "moment";
 import Loader from "../components/Loader";
+import { useAppContext } from "../Context/AppContext";
+import toast from "react-hot-toast";
 
 const Blog = () => {
   const { id } = useParams();
+  const {axios} = useAppContext()
 
   const [data, setData] = useState(null);
   const [comments, setComments] = useState([]);
   const [name , setName] = useState("")
   const [content , setContent] = useState("")
 
+  // const fetchBlogData = async () => {
+  //   const data = blog_data.find((item) => item._id === id);
+  //   setData(data);
+  // };
+
+// same function as upwards but with backend connection
   const fetchBlogData = async () => {
-    const data = blog_data.find((item) => item._id === id);
-    setData(data);
+    try {
+      const {data} = await axios.get(`/api/blog/${id}`)
+      // console.log(data);
+      
+      data.success? setData(data.blog) : toast.error(data.message)
+    } catch (error) {
+      toast.error(error.message)
+    }
   };
 
+
+  // const fetchComments = async () => {
+  //   setComments(comments_data);
+  // };
+
+  // same function as upwards but with backend connection
   const fetchComments = async () => {
-    setComments(comments_data);
+   try {
+     const {data} = await axios.post(`/api/blog/comments` , {blogId : id})
+     if(data.success){
+       setComments(data.comments)
+     }else{
+       toast.error(data.message)
+     }
+   } catch (error) {
+      toast.error(error.message)
+   }
   };
 
-  const addComment = async(e)=>{
-    e.preventDefault()
-  }
 
+  // const addComment = async(e)=>{
+  //   e.preventDefault()
+  // }
+
+  // same function as upwards but with backend connection
+const addComment = async(e)=>{
+    e.preventDefault()
+    try {
+     const {data} = await axios.post(`/api/blog/addComment` , {blog : id , name , content})
+     if(data.success){
+       toast.success(data.message)
+       setName("")
+       setContent("")
+     }else{
+       toast.error(data.message)
+     }
+   } catch (error) {
+      toast.error(error.message)
+   }
+  }
 
   useEffect(() => {
     fetchBlogData();
