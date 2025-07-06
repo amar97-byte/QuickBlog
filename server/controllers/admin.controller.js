@@ -24,7 +24,7 @@ export const adminLogin = async (req, res) => {
 };
 
 // GET ALL THE BLOGS FOR ADMIN
-export const getAllBlogAdmin = async (req, re) => {
+export const getAllBlogAdmin = async (req, res) => {
   try {
     const blogs = await Blog.find({}).sort({ createdAt: -1 });
 
@@ -36,7 +36,7 @@ export const getAllBlogAdmin = async (req, re) => {
 };
 
 //  GET ALL THE COMMENTS FOR ADMIN
-export const getAllComments = async (req, re) => {
+export const getAllComments = async (req, res) => {
   try {
     const comments = await Comment.find({})
       .populate("blog")
@@ -51,7 +51,7 @@ export const getAllComments = async (req, re) => {
 };
 
 //  GET ALL THE DASHBOARD DATA FOR ADMIN
-export const getDashboard = async (req, re) => {
+export const getDashboard = async (req, res) => {
   try {
     const recentBlogs = await Blog.find({}).sort({ createdAt: -1 }).limit(5);
     const blogs = await Blog.countDocuments();
