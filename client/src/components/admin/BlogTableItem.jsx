@@ -1,10 +1,46 @@
+import toast from 'react-hot-toast'
 import { assets } from '../../assets/assets'
+import { useAppContext } from '../../Context/AppContext'
 
 const BlogTableItem = ({blog , fetchBlogs , index}) => {
 
 const {title , createdAt} = blog
 
 const BlogDate = new Date(createdAt)
+
+const {axios} = useAppContext()
+
+const deleteBlog = async () => {
+    const confirm = window.confirm("Are you sure you want to delete this Blog?")        // it will show a msg prompt
+    if(!confirm)  return
+    
+    try {
+        const {data} = await axios.post("/api/blog/delete" , {id:blog._id})
+        if(data.success){
+            toast.success(data.message)
+            await fetchBlogs()
+        }else{
+            toast.error(data.message)
+        }
+    } catch (error) {
+            toast.error(error.message)
+    }
+}
+
+    const togglePublished = async () => {
+        try {
+        const {data} = await axios.post("/api/blog/toggle-publish" , {id:blog._id})
+             if(data.success){
+            toast.success(data.message)
+            await fetchBlogs()
+        }else{
+            toast.error(data.message)
+        }
+        } catch (error) {
+             toast.error(error.message)
+        }
+    }
+
 
   return (
     <tr className='border-y border-gray-300'>
@@ -18,10 +54,10 @@ const BlogDate = new Date(createdAt)
         </td>
 
         <td className='px-2 py-4 flex text-xs gap-3'>
-            <button className='border px-2 py-0.5 mt-1 rounded cursor-pointer'>
+            <button onClick={togglePublished} className='border px-2 py-0.5 mt-1 rounded cursor-pointer'>
                 {blog.isPublished ?  "Unpublished" : 'Published' }
             </button>
-                <img src={assets.cross_icon} alt="" className='w-8 hover:scale-110 transition-all cursor-pointer' />
+                <img onClick={deleteBlog} src={assets.cross_icon} alt="" className='w-8 hover:scale-110 transition-all cursor-pointer' />
 
         </td>
     </tr>
